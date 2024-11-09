@@ -2,10 +2,16 @@ package ru.saturday.satcow;
 import static ru.saturday.satcow.Main.*;
 
 public class Cow {
-    float x = 140, y = 210;
-    float width = 300;
-    float height = 300;
+    float x, y;
+    float width, height;
     float stepX = 5, stepY = 5;
+
+    public Cow(float x, float y, float width, float height){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 
     void fly(){
         x+=stepX;

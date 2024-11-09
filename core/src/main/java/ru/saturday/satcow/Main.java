@@ -13,21 +13,24 @@ public class Main extends ApplicationAdapter {
     private Texture image;
     public static final float SCR_WIDTH = 1280;
     public static final float SCR_HEIGHT = 720;
-    Cow cow;
+    Cow cow, cow1;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         image = new Texture("cow0.png");
-        cow = new Cow();
+        cow = new Cow(0, 0, 100, 100);
+        cow1 = new Cow(500, 500, 200, 200);
     }
 
     @Override
     public void render() {
         cow.fly();
+        cow1.fly();
         ScreenUtils.clear(0.55f, 0.15f, 0.2f, 1f);
         batch.begin();
         batch.draw(image, cow.x, cow.y, cow.width, cow.height);
+        batch.draw(image, cow1.x, cow1.y, cow1.width, cow1.height);
         batch.end();
     }
 
