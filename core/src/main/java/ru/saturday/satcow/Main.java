@@ -14,22 +14,30 @@ public class Main extends ApplicationAdapter {
     private Texture image;
     public static final float SCR_WIDTH = 1280;
     public static final float SCR_HEIGHT = 720;
-    Cow[] cow = new Cow[33];
+    Cow[] cow = new Cow[5000];
+    int time;
+    int n;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         image = new Texture("cow0.png");
-        for (int i=0; i<cow.length; i++)
-            cow[i] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, MathUtils.random(100, 200), MathUtils.random(100, 200));
+        /*for (int i=0; i<cow.length; i++)
+            cow[i] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, MathUtils.random(100, 200), MathUtils.random(100, 200));*/
     }
 
     @Override
     public void render() {
-        for (int i=0; i<cow.length; i++) cow[i].fly();
+        time++;
+        if(time%60 == 0 && n<5000){
+            float w = MathUtils.random(50, 200);
+            cow[n] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            n++;
+        }
+        for (int i=0; i<n; i++) cow[i].fly();
         ScreenUtils.clear(0.55f, 0.15f, 0.2f, 1f);
         batch.begin();
-        for (int i=0; i<cow.length; i++)
+        for (int i=0; i<n; i++)
             batch.draw(image, cow[i].x, cow[i].y, cow[i].width, cow[i].height);
         batch.end();
     }
