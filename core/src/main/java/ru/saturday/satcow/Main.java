@@ -32,23 +32,11 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        time++;
-        if(time%60 == 0 && numberLiveCows < cow.length){
-            float w = MathUtils.random(50, 200);
-            cow[numberLiveCows] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
-            numberLiveCows++;
-        }
-        if(time%30 == 0 && numberLivePigs < pig.length){
-            float w = MathUtils.random(50, 200);
-            pig[numberLivePigs] = new Pig(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
-            numberLivePigs++;
-        }
-        for (int i=0; i<numberLiveCows; i++) {
-            cow[i].fly();
-        }
-        for (int i=0; i<numberLivePigs; i++) {
-            pig[i].fly();
-        }
+        // события
+        spawnAnimals();
+        moveAnimals();
+
+        // отрисовка
         ScreenUtils.clear(0.55f, 0.15f, 0.2f, 1f);
         batch.begin();
         for (int i = 0; i< numberLiveCows; i++) {
@@ -64,5 +52,29 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         imgCow.dispose();
+        imgPig.dispose();
+    }
+
+    private void spawnAnimals(){
+        time++;
+        if(time%60 == 0 && numberLiveCows < cow.length){
+            float w = MathUtils.random(50, 200);
+            cow[numberLiveCows] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            numberLiveCows++;
+        }
+        if(time%30 == 0 && numberLivePigs < pig.length){
+            float w = MathUtils.random(50, 200);
+            pig[numberLivePigs] = new Pig(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            numberLivePigs++;
+        }
+    }
+
+    private void moveAnimals(){
+        for (int i=0; i<numberLiveCows; i++) {
+            cow[i].fly();
+        }
+        for (int i=0; i<numberLivePigs; i++) {
+            pig[i].fly();
+        }
     }
 }
