@@ -1,6 +1,8 @@
 package ru.saturday.satcow;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -14,6 +16,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture imgCow;
     private Texture imgPig;
+    private Sound sndPig;
+    private Sound sndCow;
 
     Cow[] cow = new Cow[5000];
     Pig[] pig = new Pig[5000];
@@ -26,6 +30,8 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         imgCow = new Texture("cow0.png");
         imgPig = new Texture("pig.png");
+        sndCow = Gdx.audio.newSound(Gdx.files.internal("sound-cow.mp3"));
+        sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
         /*for (int i=0; i<cow.length; i++)
             cow[i] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, MathUtils.random(100, 200), MathUtils.random(100, 200));*/
     }
@@ -61,11 +67,13 @@ public class Main extends ApplicationAdapter {
             float w = MathUtils.random(50, 200);
             cow[numberLiveCows] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
             numberLiveCows++;
+            //sndCow.play();
         }
         if(time%30 == 0 && numberLivePigs < pig.length){
-            float w = MathUtils.random(50, 200);
+            float w = MathUtils.random(50, 100);
             pig[numberLivePigs] = new Pig(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
             numberLivePigs++;
+            //sndPig.play();
         }
     }
 
