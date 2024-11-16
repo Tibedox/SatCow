@@ -3,6 +3,7 @@ package ru.saturday.satcow;
 import static ru.saturday.satcow.Main.SCR_HEIGHT;
 import static ru.saturday.satcow.Main.SCR_WIDTH;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 
 public abstract class Animal {
@@ -26,5 +27,9 @@ public abstract class Animal {
         if(y<0 || y>SCR_HEIGHT-height) stepY = -stepY;
     }
 
-    abstract void say();
+    abstract void say(Sound snd);
+
+    boolean hit(float tx, float ty){
+        return x<tx && tx<x+width && y<ty && y<y+height;
+    }
 }

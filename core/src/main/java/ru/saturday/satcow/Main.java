@@ -52,7 +52,16 @@ public class Main extends ApplicationAdapter {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
 
-            System.out.println(touch.x+" "+touch.y);
+            for (int i = 0; i < numberLiveCows; i++) {
+                if(cow[i].hit(touch.x, touch.y)){
+                    cow[i].say(sndCow);
+                }
+            }
+            for (int i = 0; i < numberLivePigs; i++) {
+                if(pig[i].hit(touch.x, touch.y)){
+                    pig[i].say(sndPig);
+                }
+            }
         }
 
         // события
