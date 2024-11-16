@@ -8,15 +8,18 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
+    public static final float SCR_WIDTH = 1280;
+    public static final float SCR_HEIGHT = 720;
+
     private SpriteBatch batch;
     private Texture imgCow;
     private Texture imgPig;
-    public static final float SCR_WIDTH = 1280;
-    public static final float SCR_HEIGHT = 720;
+
     Cow[] cow = new Cow[5000];
     Pig[] pig = new Pig[5000];
     int time;
-    int n;
+    int numberLiveCows;
+    int numberLivePigs;
 
     @Override
     public void create() {
@@ -30,21 +33,28 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         time++;
-        if(time%60 == 0 && n<5000){
+        if(time%60 == 0 && numberLiveCows < cow.length){
             float w = MathUtils.random(50, 200);
-            cow[n] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
-            w = MathUtils.random(20, 100);
-            pig[n] = new Pig(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
-            n++;
+            cow[numberLiveCows] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            numberLiveCows++;
         }
-        for (int i=0; i<n; i++) {
+        if(time%30 == 0 && numberLivePigs < pig.length){
+            float w = MathUtils.random(50, 200);
+            pig[numberLivePigs] = new Pig(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            numberLivePigs++;
+        }
+        for (int i=0; i<numberLiveCows; i++) {
             cow[i].fly();
+        }
+        for (int i=0; i<numberLivePigs; i++) {
             pig[i].fly();
         }
         ScreenUtils.clear(0.55f, 0.15f, 0.2f, 1f);
         batch.begin();
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i< numberLiveCows; i++) {
             batch.draw(imgCow, cow[i].x, cow[i].y, cow[i].width, cow[i].height);
+        }
+        for (int i = 0; i< numberLivePigs; i++) {
             batch.draw(imgPig, pig[i].x, pig[i].y, pig[i].width, pig[i].height);
         }
         batch.end();
