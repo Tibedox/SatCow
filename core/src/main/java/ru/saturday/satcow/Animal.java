@@ -40,6 +40,6 @@ public abstract class Animal {
     abstract void dead();
 
     boolean hit(float tx, float ty){
-        return x<tx && tx<x+width && y<ty && y<y+height;
+        return x<tx && tx<x+width && y<ty && ty<y+height;
     }
 }

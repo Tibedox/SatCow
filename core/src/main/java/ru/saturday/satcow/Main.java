@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -19,6 +20,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Vector3 touch;
+    private BitmapFont font;
 
     private Texture imgCow;
     private Texture imgPig;
@@ -33,6 +35,7 @@ public class Main extends ApplicationAdapter {
     long timeLastSpawnCow, timeLastSpawnPig;
     long timeIntervalCow = 3000;
     long timeIntervalPig = 2000;
+    int countDeads;
 
     @Override
     public void create() {
@@ -40,6 +43,7 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
+        font = new BitmapFont(Gdx.files.internal("heffer.fnt"));
 
         imgCow = new Texture("cow0.png");
         imgPig = new Texture("pig.png");
@@ -56,15 +60,17 @@ public class Main extends ApplicationAdapter {
             camera.unproject(touch);
 
             for (int i = 0; i < numberLiveCows; i++) {
-                if(cow[i].hit(touch.x, touch.y)){
+                if(!cow[i].isDead && cow[i].hit(touch.x, touch.y)){
                     sndCow.play();
                     cow[i].dead();
+                    countDeads++;
                 }
             }
             for (int i = 0; i < numberLivePigs; i++) {
-                if(pig[i].hit(touch.x, touch.y)){
+                if(!pig[i].isDead && pig[i].hit(touch.x, touch.y)){
                     sndPig.play();
                     pig[i].dead();
+                    countDeads++;
                 }
             }
         }
@@ -85,6 +91,7 @@ public class Main extends ApplicationAdapter {
             batch.draw(imgPig, pig[i].x, pig[i].y, pig[i].width, pig[i].height,
                 0, 0, 742, 708, pig[i].flipX, pig[i].flipY);
         }
+        font.draw(batch, "Сбито: "+countDeads, 10, SCR_HEIGHT-10);
         batch.end();
     }
 
@@ -96,6 +103,7 @@ public class Main extends ApplicationAdapter {
         imgGrass.dispose();
         sndCow.dispose();
         sndPig.dispose();
+        font.dispose();
     }
 
     private void spawnAnimals(){
