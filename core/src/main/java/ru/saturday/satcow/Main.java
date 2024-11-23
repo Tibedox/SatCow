@@ -35,6 +35,8 @@ public class Main extends ApplicationAdapter {
     long timeLastSpawnCow, timeLastSpawnPig;
     long timeIntervalCow = 3000;
     long timeIntervalPig = 2000;
+    long timeStartPlay;
+    long timeCurrent;
     int countDeads;
 
     @Override
@@ -50,6 +52,8 @@ public class Main extends ApplicationAdapter {
         imgGrass = new Texture("grass.jpg");
         sndCow = Gdx.audio.newSound(Gdx.files.internal("sound-cow.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
+
+        timeStartPlay = TimeUtils.millis();
     }
 
     @Override
@@ -78,6 +82,7 @@ public class Main extends ApplicationAdapter {
         // события
         spawnAnimals();
         moveAnimals();
+        timeCurrent = TimeUtils.millis() - timeStartPlay;
 
         // отрисовка
         batch.setProjectionMatrix(camera.combined);
@@ -91,7 +96,8 @@ public class Main extends ApplicationAdapter {
             batch.draw(imgPig, pig[i].x, pig[i].y, pig[i].width, pig[i].height,
                 0, 0, 742, 708, pig[i].flipX, pig[i].flipY);
         }
-        font.draw(batch, "Сбито: "+countDeads, 10, SCR_HEIGHT-10);
+        font.draw(batch, "cбито: "+countDeads, 10, SCR_HEIGHT-10);
+        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-140, SCR_HEIGHT-10);
         batch.end();
     }
 
@@ -127,5 +133,9 @@ public class Main extends ApplicationAdapter {
         for (int i=0; i<numberLivePigs; i++) {
             pig[i].fly();
         }
+    }
+
+    String showTime(long t){
+        return t/1000/60/60+":"+t/1000/60%60/10+t/1000/60%60%10+":"+t/1000%60/10+t/1000%60%10;
     }
 }
