@@ -57,12 +57,14 @@ public class Main extends ApplicationAdapter {
 
             for (int i = 0; i < numberLiveCows; i++) {
                 if(cow[i].hit(touch.x, touch.y)){
-                    cow[i].say(sndCow);
+                    sndCow.play();
+                    cow[i].dead();
                 }
             }
             for (int i = 0; i < numberLivePigs; i++) {
                 if(pig[i].hit(touch.x, touch.y)){
-                    pig[i].say(sndPig);
+                    sndPig.play();
+                    pig[i].dead();
                 }
             }
         }
@@ -76,10 +78,12 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         batch.draw(imgGrass, 0, 0, SCR_WIDTH, SCR_HEIGHT);
         for (int i = 0; i< numberLiveCows; i++) {
-            batch.draw(imgCow, cow[i].x, cow[i].y, cow[i].width, cow[i].height);
+            batch.draw(imgCow, cow[i].x, cow[i].y, cow[i].width, cow[i].height,
+            0, 0, 842, 861, cow[i].flipX, cow[i].flipY);
         }
         for (int i = 0; i< numberLivePigs; i++) {
-            batch.draw(imgPig, pig[i].x, pig[i].y, pig[i].width, pig[i].height);
+            batch.draw(imgPig, pig[i].x, pig[i].y, pig[i].width, pig[i].height,
+                0, 0, 742, 708, pig[i].flipX, pig[i].flipY);
         }
         batch.end();
     }
