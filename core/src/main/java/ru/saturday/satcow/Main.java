@@ -8,9 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.ScreenUtils;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     public static final float SCR_WIDTH = 1280;
     public static final float SCR_HEIGHT = 720;
@@ -45,8 +43,6 @@ public class Main extends ApplicationAdapter {
         imgGrass = new Texture("grass.jpg");
         sndCow = Gdx.audio.newSound(Gdx.files.internal("sound-cow.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
-        /*for (int i=0; i<cow.length; i++)
-            cow[i] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, MathUtils.random(100, 200), MathUtils.random(100, 200));*/
     }
 
     @Override
@@ -55,7 +51,7 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.justTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
-            System.out.println(touch.x+" "+touch.y);
+
             for (int i = 0; i < numberLiveCows; i++) {
                 if(cow[i].hit(touch.x, touch.y)){
                     cow[i].say(sndCow);
@@ -102,8 +98,7 @@ public class Main extends ApplicationAdapter {
             cow[numberLiveCows] = new Cow(SPAWN_X, SPAWN_Y, w, w);
             numberLiveCows++;
         }
-        if(time%30 == 0 && numberLivePigs < pig.length){
-            float w = MathUtils.random(50, 100);
+        if(time%30 == 0 && numberLivePigs < pig.length){            float w = MathUtils.random(50, 100);
             pig[numberLivePigs] = new Pig(SPAWN_X, SPAWN_Y, w, w);
             numberLivePigs++;
         }
