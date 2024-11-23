@@ -14,6 +14,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Main extends ApplicationAdapter {
     public static final float SCR_WIDTH = 1280;
     public static final float SCR_HEIGHT = 720;
+    public static final float SPAWN_X = 786;
+    public static final float SPAWN_Y = 283;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -21,6 +23,7 @@ public class Main extends ApplicationAdapter {
 
     private Texture imgCow;
     private Texture imgPig;
+    private Texture imgGrass;
     private Sound sndPig;
     private Sound sndCow;
 
@@ -39,6 +42,7 @@ public class Main extends ApplicationAdapter {
 
         imgCow = new Texture("cow0.png");
         imgPig = new Texture("pig.png");
+        imgGrass = new Texture("grass.jpg");
         sndCow = Gdx.audio.newSound(Gdx.files.internal("sound-cow.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
         /*for (int i=0; i<cow.length; i++)
@@ -51,7 +55,7 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.justTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
-
+            System.out.println(touch.x+" "+touch.y);
             for (int i = 0; i < numberLiveCows; i++) {
                 if(cow[i].hit(touch.x, touch.y)){
                     cow[i].say(sndCow);
@@ -69,9 +73,9 @@ public class Main extends ApplicationAdapter {
         moveAnimals();
 
         // отрисовка
-        ScreenUtils.clear(0.55f, 0.15f, 0.2f, 1f);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        batch.draw(imgGrass, 0, 0, SCR_WIDTH, SCR_HEIGHT);
         for (int i = 0; i< numberLiveCows; i++) {
             batch.draw(imgCow, cow[i].x, cow[i].y, cow[i].width, cow[i].height);
         }
@@ -86,18 +90,21 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         imgCow.dispose();
         imgPig.dispose();
+        imgGrass.dispose();
+        sndCow.dispose();
+        sndPig.dispose();
     }
 
     private void spawnAnimals(){
         time++;
         if(time%60 == 0 && numberLiveCows < cow.length){
             float w = MathUtils.random(50, 200);
-            cow[numberLiveCows] = new Cow(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            cow[numberLiveCows] = new Cow(SPAWN_X, SPAWN_Y, w, w);
             numberLiveCows++;
         }
         if(time%30 == 0 && numberLivePigs < pig.length){
             float w = MathUtils.random(50, 100);
-            pig[numberLivePigs] = new Pig(SCR_WIDTH/2, SCR_HEIGHT/2, w, w);
+            pig[numberLivePigs] = new Pig(SPAWN_X, SPAWN_Y, w, w);
             numberLivePigs++;
         }
     }
