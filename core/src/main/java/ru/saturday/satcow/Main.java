@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class Main extends ApplicationAdapter {
     public static final float SCR_WIDTH = 1280;
@@ -27,9 +28,11 @@ public class Main extends ApplicationAdapter {
 
     Cow[] cow = new Cow[5000];
     Pig[] pig = new Pig[5000];
-    int time;
     int numberLiveCows;
     int numberLivePigs;
+    long timeLastSpawnCow, timeLastSpawnPig;
+    long timeIntervalCow = 3000;
+    long timeIntervalPig = 2000;
 
     @Override
     public void create() {
@@ -92,15 +95,16 @@ public class Main extends ApplicationAdapter {
     }
 
     private void spawnAnimals(){
-        time++;
-        if(time%60 == 0 && numberLiveCows < cow.length){
+        if(TimeUtils.millis() > timeLastSpawnCow+timeIntervalCow && numberLiveCows < cow.length){
             float w = MathUtils.random(50, 200);
             cow[numberLiveCows] = new Cow(SPAWN_X, SPAWN_Y, w, w);
             numberLiveCows++;
+            timeLastSpawnCow = TimeUtils.millis();
         }
-        if(time%30 == 0 && numberLivePigs < pig.length){            float w = MathUtils.random(50, 100);
+        if(TimeUtils.millis() > timeLastSpawnPig+timeIntervalPig && numberLivePigs < pig.length){            float w = MathUtils.random(50, 100);
             pig[numberLivePigs] = new Pig(SPAWN_X, SPAWN_Y, w, w);
             numberLivePigs++;
+            timeLastSpawnPig = TimeUtils.millis();
         }
     }
 
