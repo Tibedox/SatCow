@@ -28,11 +28,12 @@ public class Main extends ApplicationAdapter {
     private Sound sndPig;
     private Sound sndCow;
 
-    Cow[] cow = new Cow[20];
-    Pig[] pig = new Pig[30];
+    Cow[] cow = new Cow[2];
+    Pig[] pig = new Pig[3];
     long timeStartPlay;
     long timeCurrent;
     int countAnimals;
+    boolean gameOver;
 
     @Override
     public void create() {
@@ -86,7 +87,12 @@ public class Main extends ApplicationAdapter {
         // события
         for (Cow a : cow) a.fly();
         for (Pig a : pig) a.fly();
-        timeCurrent = TimeUtils.millis() - timeStartPlay;
+        if(countAnimals == pig.length+cow.length){
+            gameOver = false;
+        }
+        if(!gameOver) {
+            timeCurrent = TimeUtils.millis() - timeStartPlay;
+        }
 
         // отрисовка
         batch.setProjectionMatrix(camera.combined);
@@ -99,7 +105,7 @@ public class Main extends ApplicationAdapter {
             batch.draw(imgPig, a.x, a.y, a.width, a.height, 0, 0, 742, 708, a.flipX, a.flipY);
         }
         font.draw(batch, "Поймано: "+ countAnimals, 10, SCR_HEIGHT-10);
-        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-140, SCR_HEIGHT-10);
+        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-170, SCR_HEIGHT-10);
         batch.end();
     }
 
@@ -115,6 +121,10 @@ public class Main extends ApplicationAdapter {
     }
 
     String showTime(long t){
-        return t/1000/60/60+":"+t/1000/60%60/10+t/1000/60%60%10+":"+t/1000%60/10+t/1000%60%10;
+        long msec = t%1000;
+        long sec = t/1000%60;
+        long min = t/1000/60%60;
+        long hour = t/1000/60/60;
+        return hour+":"+min/10+min%10+":"+sec/10+sec%10+":"+msec/100;
     }
 }

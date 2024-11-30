@@ -1,14 +1,13 @@
 package ru.saturday.satcow;
 
-import static ru.saturday.satcow.Main.SCR_HEIGHT;
-import static ru.saturday.satcow.Main.SCR_WIDTH;
+import static ru.saturday.satcow.Main.*;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 
 public abstract class Animal {
     float x, y;
     float width, height;
+    float decreaseWidth, decreaseHeight;
     float stepX, stepY;
     boolean isDead;
     boolean flipX, flipY;
@@ -34,10 +33,26 @@ public abstract class Animal {
             if (y < 0 || y > SCR_HEIGHT - height) {
                 stepY = -stepY;
             }
+        } else {
+            width -= decreaseWidth;
+            height -= decreaseHeight;
+            if(SPAWN_X-Math.abs(stepX)/2 < x && x < SPAWN_X+Math.abs(stepX)/2 &&
+                SPAWN_Y-Math.abs(stepY)/2 < y && y < SPAWN_Y+Math.abs(stepY)/2) {
+                stepX = 0;
+                stepY = 0;
+                decreaseWidth = 0;
+                decreaseHeight = 0;
+            }
         }
     }
 
-    abstract void dead();
+    void dead() {
+        isDead = true;
+        stepX = (SPAWN_X - x)/20;
+        stepY = (SPAWN_Y - y)/20;
+        decreaseWidth = width/20;
+        decreaseHeight = height/20;
+    }
 
     boolean hit(float tx, float ty){
         return x<tx && tx<x+width && y<ty && ty<y+height;
