@@ -28,16 +28,11 @@ public class Main extends ApplicationAdapter {
     private Sound sndPig;
     private Sound sndCow;
 
-    Cow[] cow = new Cow[5000];
-    Pig[] pig = new Pig[5000];
-    int numberLiveCows;
-    int numberLivePigs;
-    long timeLastSpawnCow, timeLastSpawnPig;
-    long timeIntervalCow = 3000;
-    long timeIntervalPig = 2000;
+    Cow[] cow = new Cow[20];
+    Pig[] pig = new Pig[30];
     long timeStartPlay;
     long timeCurrent;
-    int countDeads;
+    int countAnimals;
 
     @Override
     public void create() {
@@ -54,6 +49,15 @@ public class Main extends ApplicationAdapter {
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
 
         timeStartPlay = TimeUtils.millis();
+
+        for (int i = 0; i < cow.length; i++) {
+            float w = MathUtils.random(50, 200);
+            cow[i] = new Cow(SPAWN_X, SPAWN_Y, w, w);
+        }
+        for (int i = 0; i < pig.length; i++) {
+            float w = MathUtils.random(50, 200);
+            pig[i] = new Pig(SPAWN_X, SPAWN_Y, w, w);
+        }
     }
 
     @Override
@@ -63,40 +67,38 @@ public class Main extends ApplicationAdapter {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
 
-            for (int i = 0; i < numberLiveCows; i++) {
+            for (int i = 0; i < cow.length; i++) {
                 if(!cow[i].isDead && cow[i].hit(touch.x, touch.y)){
                     sndCow.play();
                     cow[i].dead();
-                    countDeads++;
+                    countAnimals++;
                 }
             }
-            for (int i = 0; i < numberLivePigs; i++) {
+            for (int i = 0; i < pig.length; i++) {
                 if(!pig[i].isDead && pig[i].hit(touch.x, touch.y)){
                     sndPig.play();
                     pig[i].dead();
-                    countDeads++;
+                    countAnimals++;
                 }
             }
         }
 
         // события
-        spawnAnimals();
-        moveAnimals();
+        for (Cow a : cow) a.fly();
+        for (Pig a : pig) a.fly();
         timeCurrent = TimeUtils.millis() - timeStartPlay;
 
         // отрисовка
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(imgGrass, 0, 0, SCR_WIDTH, SCR_HEIGHT);
-        for (int i = 0; i< numberLiveCows; i++) {
-            batch.draw(imgCow, cow[i].x, cow[i].y, cow[i].width, cow[i].height,
-            0, 0, 842, 861, cow[i].flipX, cow[i].flipY);
+        for (Cow a : cow) {
+            batch.draw(imgCow, a.x, a.y, a.width, a.height, 0, 0, 842, 861, a.flipX, a.flipY);
         }
-        for (int i = 0; i< numberLivePigs; i++) {
-            batch.draw(imgPig, pig[i].x, pig[i].y, pig[i].width, pig[i].height,
-                0, 0, 742, 708, pig[i].flipX, pig[i].flipY);
+        for (Pig a : pig) {
+            batch.draw(imgPig, a.x, a.y, a.width, a.height, 0, 0, 742, 708, a.flipX, a.flipY);
         }
-        font.draw(batch, "cбито: "+countDeads, 10, SCR_HEIGHT-10);
+        font.draw(batch, "Поймано: "+ countAnimals, 10, SCR_HEIGHT-10);
         font.draw(batch, showTime(timeCurrent), SCR_WIDTH-140, SCR_HEIGHT-10);
         batch.end();
     }
@@ -110,29 +112,6 @@ public class Main extends ApplicationAdapter {
         sndCow.dispose();
         sndPig.dispose();
         font.dispose();
-    }
-
-    private void spawnAnimals(){
-        if(TimeUtils.millis() > timeLastSpawnCow+timeIntervalCow && numberLiveCows < cow.length){
-            float w = MathUtils.random(50, 200);
-            cow[numberLiveCows] = new Cow(SPAWN_X, SPAWN_Y, w, w);
-            numberLiveCows++;
-            timeLastSpawnCow = TimeUtils.millis();
-        }
-        if(TimeUtils.millis() > timeLastSpawnPig+timeIntervalPig && numberLivePigs < pig.length){            float w = MathUtils.random(50, 100);
-            pig[numberLivePigs] = new Pig(SPAWN_X, SPAWN_Y, w, w);
-            numberLivePigs++;
-            timeLastSpawnPig = TimeUtils.millis();
-        }
-    }
-
-    private void moveAnimals(){
-        for (int i=0; i<numberLiveCows; i++) {
-            cow[i].fly();
-        }
-        for (int i=0; i<numberLivePigs; i++) {
-            pig[i].fly();
-        }
     }
 
     String showTime(long t){
