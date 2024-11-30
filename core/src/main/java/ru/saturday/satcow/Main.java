@@ -88,7 +88,7 @@ public class Main extends ApplicationAdapter {
         for (Cow a : cow) a.fly();
         for (Pig a : pig) a.fly();
         if(countAnimals == pig.length+cow.length){
-            gameOver = false;
+            gameOver = true;
         }
         if(!gameOver) {
             timeCurrent = TimeUtils.millis() - timeStartPlay;
