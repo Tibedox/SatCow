@@ -94,8 +94,10 @@ public class Main extends ApplicationAdapter {
         // события
         for (Cow cow : cows) cow.fly();
         for (Pig pig : pigs) pig.fly();
-        if(countAnimals == pigs.length+ cows.length){
+        if(countAnimals == pigs.length+cows.length && !gameOver){
             gameOver = true;
+            players[players.length-1].set("Winner", timeCurrent);
+            sortTableOfRecords();
         }
         if(!gameOver) {
             timeCurrent = TimeUtils.millis() - timeStartPlay;
@@ -136,11 +138,31 @@ public class Main extends ApplicationAdapter {
         font80.dispose();
     }
 
-    String showTime(long t){
+    private String showTime(long t){
         long msec = t%1000;
         long sec = t/1000%60;
         long min = t/1000/60%60;
         //long hour = t/1000/60/60;
         return min/10+min%10+":"+sec/10+sec%10+":"+msec/100;
+    }
+
+    private void sortTableOfRecords(){
+        for (Player p: players) {
+            if(p.time == 0) p.time = Long.MAX_VALUE;
+        }
+
+        for(int j = 0; j < players.length; j++) {
+            for (int i = 0; i < players.length - 1; i++) {
+                if (players[i].time > players[i + 1].time) {
+                    Player c = players[i];
+                    players[i] = players[i + 1];
+                    players[i + 1] = c;
+                }
+            }
+        }
+
+        for (Player p: players) {
+            if(p.time == Long.MAX_VALUE) p.time = 0;
+        }
     }
 }
