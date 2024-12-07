@@ -2,6 +2,7 @@ package ru.saturday.satcow;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,7 +36,7 @@ public class Main extends ApplicationAdapter {
     long timeStartPlay;
     long timeCurrent;
     int countAnimals;
-    boolean gameOver;
+    boolean isGameOver;
 
     @Override
     public void create() {
@@ -66,6 +67,7 @@ public class Main extends ApplicationAdapter {
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player("Noname", 0);
         }
+        loadTableOfRecords();
     }
 
     @Override
@@ -94,12 +96,10 @@ public class Main extends ApplicationAdapter {
         // события
         for (Cow cow : cows) cow.fly();
         for (Pig pig : pigs) pig.fly();
-        if(countAnimals == pigs.length+cows.length && !gameOver){
-            gameOver = true;
-            players[players.length-1].set("Winner", timeCurrent);
-            sortTableOfRecords();
+        if(countAnimals == pigs.length+cows.length && !isGameOver){
+            gameOver();
         }
-        if(!gameOver) {
+        if(!isGameOver) {
             timeCurrent = TimeUtils.millis() - timeStartPlay;
         }
 
@@ -115,7 +115,7 @@ public class Main extends ApplicationAdapter {
         }
         font.draw(batch, "Поймано: "+ countAnimals, 10, SCR_HEIGHT-10);
         font.draw(batch, showTime(timeCurrent), SCR_WIDTH-120, SCR_HEIGHT-10);
-        if(gameOver){
+        if(isGameOver){
             font80.draw(batch, "Game Over", 0, SCR_HEIGHT-100, SCR_WIDTH, Align.center, true);
             for (int i = 0; i < players.length-1; i++) {
                 font60.draw(batch, players[i].name, 400, 500-i*70);
@@ -146,6 +146,13 @@ public class Main extends ApplicationAdapter {
         return min/10+min%10+":"+sec/10+sec%10+":"+msec/100;
     }
 
+    private void gameOver(){
+        isGameOver = true;
+        players[players.length-1].set("Winner2", timeCurrent);
+        sortTableOfRecords();
+        saveTableOfRecords();
+    }
+
     private void sortTableOfRecords(){
         for (Player p: players) {
             if(p.time == 0) p.time = Long.MAX_VALUE;
@@ -163,6 +170,23 @@ public class Main extends ApplicationAdapter {
 
         for (Player p: players) {
             if(p.time == Long.MAX_VALUE) p.time = 0;
+        }
+    }
+
+    private void saveTableOfRecords(){
+        Preferences prefs = Gdx.app.getPreferences("CowPigsPrefs");
+        for (int i = 0; i < players.length; i++) {
+            prefs.putString("name"+i, players[i].name);
+            prefs.putLong("time"+i, players[i].time);
+        }
+        prefs.flush();
+    }
+
+    private void loadTableOfRecords(){
+        Preferences prefs = Gdx.app.getPreferences("CowPigsPrefs");
+        for (int i = 0; i < players.length; i++) {
+            players[i].name = prefs.getString("name"+i, "none");
+            players[i].time = prefs.getLong("time"+i, 0);
         }
     }
 }
