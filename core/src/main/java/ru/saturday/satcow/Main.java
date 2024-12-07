@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class Main extends ApplicationAdapter {
@@ -20,7 +21,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Vector3 touch;
-    private BitmapFont font;
+    private BitmapFont font, font80;
 
     private Texture imgCow;
     private Texture imgPig;
@@ -41,7 +42,8 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
-        font = new BitmapFont(Gdx.files.internal("heffer.fnt"));
+        font = new BitmapFont(Gdx.files.internal("fonts/heffer.fnt"));
+        font80 = new BitmapFont(Gdx.files.internal("fonts/heffer80.fnt"));
 
         imgCow = new Texture("cow0.png");
         imgPig = new Texture("pig.png");
@@ -106,6 +108,9 @@ public class Main extends ApplicationAdapter {
         }
         font.draw(batch, "Поймано: "+ countAnimals, 10, SCR_HEIGHT-10);
         font.draw(batch, showTime(timeCurrent), SCR_WIDTH-170, SCR_HEIGHT-10);
+        if(gameOver){
+            font80.draw(batch, "Game Over", 0, SCR_HEIGHT-100, SCR_WIDTH, Align.center, true);
+        }
         batch.end();
     }
 
@@ -118,6 +123,7 @@ public class Main extends ApplicationAdapter {
         sndCow.dispose();
         sndPig.dispose();
         font.dispose();
+        font80.dispose();
     }
 
     String showTime(long t){
