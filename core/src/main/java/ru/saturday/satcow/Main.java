@@ -21,7 +21,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Vector3 touch;
-    private BitmapFont font, font80;
+    private BitmapFont font, font60, font80;
 
     private Texture imgCow;
     private Texture imgPig;
@@ -29,8 +29,9 @@ public class Main extends ApplicationAdapter {
     private Sound sndPig;
     private Sound sndCow;
 
-    Cow[] cow = new Cow[2];
-    Pig[] pig = new Pig[3];
+    Cow[] cows = new Cow[2];
+    Pig[] pigs = new Pig[3];
+    Player[] players = new Player[6];
     long timeStartPlay;
     long timeCurrent;
     int countAnimals;
@@ -43,6 +44,7 @@ public class Main extends ApplicationAdapter {
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
         font = new BitmapFont(Gdx.files.internal("fonts/heffer.fnt"));
+        font60 = new BitmapFont(Gdx.files.internal("fonts/heffer60.fnt"));
         font80 = new BitmapFont(Gdx.files.internal("fonts/heffer80.fnt"));
 
         imgCow = new Texture("cow0.png");
@@ -53,13 +55,16 @@ public class Main extends ApplicationAdapter {
 
         timeStartPlay = TimeUtils.millis();
 
-        for (int i = 0; i < cow.length; i++) {
+        for (int i = 0; i < cows.length; i++) {
             float w = MathUtils.random(50, 200);
-            cow[i] = new Cow(SPAWN_X, SPAWN_Y, w, w);
+            cows[i] = new Cow(SPAWN_X, SPAWN_Y, w, w);
         }
-        for (int i = 0; i < pig.length; i++) {
+        for (int i = 0; i < pigs.length; i++) {
             float w = MathUtils.random(50, 200);
-            pig[i] = new Pig(SPAWN_X, SPAWN_Y, w, w);
+            pigs[i] = new Pig(SPAWN_X, SPAWN_Y, w, w);
+        }
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new Player("Noname", 0);
         }
     }
 
@@ -70,26 +75,26 @@ public class Main extends ApplicationAdapter {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
 
-            for (int i = 0; i < cow.length; i++) {
-                if(!cow[i].isDead && cow[i].hit(touch.x, touch.y)){
+            for (Cow cow : cows) {
+                if (!cow.isDead && cow.hit(touch.x, touch.y)) {
                     sndCow.play();
-                    cow[i].dead();
+                    cow.dead();
                     countAnimals++;
                 }
             }
-            for (int i = 0; i < pig.length; i++) {
-                if(!pig[i].isDead && pig[i].hit(touch.x, touch.y)){
+            for (Pig pig : pigs) {
+                if (!pig.isDead && pig.hit(touch.x, touch.y)) {
                     sndPig.play();
-                    pig[i].dead();
+                    pig.dead();
                     countAnimals++;
                 }
             }
         }
 
         // события
-        for (Cow a : cow) a.fly();
-        for (Pig a : pig) a.fly();
-        if(countAnimals == pig.length+cow.length){
+        for (Cow cow : cows) cow.fly();
+        for (Pig pig : pigs) pig.fly();
+        if(countAnimals == pigs.length+ cows.length){
             gameOver = true;
         }
         if(!gameOver) {
@@ -100,16 +105,20 @@ public class Main extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(imgGrass, 0, 0, SCR_WIDTH, SCR_HEIGHT);
-        for (Cow a : cow) {
-            batch.draw(imgCow, a.x, a.y, a.width, a.height, 0, 0, 842, 861, a.flipX, a.flipY);
+        for (Cow cow : cows) {
+            batch.draw(imgCow, cow.x, cow.y, cow.width, cow.height, 0, 0, 842, 861, cow.flipX, cow.flipY);
         }
-        for (Pig a : pig) {
-            batch.draw(imgPig, a.x, a.y, a.width, a.height, 0, 0, 742, 708, a.flipX, a.flipY);
+        for (Pig pig : pigs) {
+            batch.draw(imgPig, pig.x, pig.y, pig.width, pig.height, 0, 0, 742, 708, pig.flipX, pig.flipY);
         }
         font.draw(batch, "Поймано: "+ countAnimals, 10, SCR_HEIGHT-10);
-        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-170, SCR_HEIGHT-10);
+        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-120, SCR_HEIGHT-10);
         if(gameOver){
             font80.draw(batch, "Game Over", 0, SCR_HEIGHT-100, SCR_WIDTH, Align.center, true);
+            for (int i = 0; i < players.length-1; i++) {
+                font60.draw(batch, players[i].name, 400, 500-i*70);
+                font60.draw(batch, showTime(players[i].time), 750, 500-i*70);
+            }
         }
         batch.end();
     }
@@ -123,6 +132,7 @@ public class Main extends ApplicationAdapter {
         sndCow.dispose();
         sndPig.dispose();
         font.dispose();
+        font60.dispose();
         font80.dispose();
     }
 
@@ -130,7 +140,7 @@ public class Main extends ApplicationAdapter {
         long msec = t%1000;
         long sec = t/1000%60;
         long min = t/1000/60%60;
-        long hour = t/1000/60/60;
-        return hour+":"+min/10+min%10+":"+sec/10+sec%10+":"+msec/100;
+        //long hour = t/1000/60/60;
+        return min/10+min%10+":"+sec/10+sec%10+":"+msec/100;
     }
 }
