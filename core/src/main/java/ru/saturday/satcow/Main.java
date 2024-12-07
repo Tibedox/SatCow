@@ -30,8 +30,10 @@ public class Main extends ApplicationAdapter {
     private Sound sndPig;
     private Sound sndCow;
 
-    Cow[] cows = new Cow[2];
-    Pig[] pigs = new Pig[3];
+    CowButton btnRestart;
+
+    Cow[] cows = new Cow[33];
+    Pig[] pigs = new Pig[22];
     Player[] players = new Player[6];
     long timeStartPlay;
     long timeCurrent;
@@ -54,20 +56,13 @@ public class Main extends ApplicationAdapter {
         sndCow = Gdx.audio.newSound(Gdx.files.internal("sound-cow.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
 
-        timeStartPlay = TimeUtils.millis();
+        btnRestart = new CowButton("RESTART", font60, 550, 120);
 
-        for (int i = 0; i < cows.length; i++) {
-            float w = MathUtils.random(50, 200);
-            cows[i] = new Cow(SPAWN_X, SPAWN_Y, w, w);
-        }
-        for (int i = 0; i < pigs.length; i++) {
-            float w = MathUtils.random(50, 200);
-            pigs[i] = new Pig(SPAWN_X, SPAWN_Y, w, w);
-        }
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player("Noname", 0);
         }
         loadTableOfRecords();
+        gameRestart();
     }
 
     @Override
@@ -89,6 +84,12 @@ public class Main extends ApplicationAdapter {
                     sndPig.play();
                     pig.dead();
                     countAnimals++;
+                }
+            }
+
+            if(isGameOver){
+                if(btnRestart.hit(touch.x, touch.y)){
+                    gameRestart();
                 }
             }
         }
@@ -121,6 +122,7 @@ public class Main extends ApplicationAdapter {
                 font60.draw(batch, players[i].name, 400, 500-i*70);
                 font60.draw(batch, showTime(players[i].time), 750, 500-i*70);
             }
+            btnRestart.font.draw(batch,btnRestart.text, btnRestart.x, btnRestart.y);
         }
         batch.end();
     }
@@ -151,6 +153,20 @@ public class Main extends ApplicationAdapter {
         players[players.length-1].set("Winner2", timeCurrent);
         sortTableOfRecords();
         saveTableOfRecords();
+    }
+
+    private void gameRestart(){
+        isGameOver = false;
+        countAnimals = 0;
+        for (int i = 0; i < cows.length; i++) {
+            float w = MathUtils.random(50, 200);
+            cows[i] = new Cow(SPAWN_X, SPAWN_Y, w, w);
+        }
+        for (int i = 0; i < pigs.length; i++) {
+            float w = MathUtils.random(50, 200);
+            pigs[i] = new Pig(SPAWN_X, SPAWN_Y, w, w);
+        }
+        timeStartPlay = TimeUtils.millis();
     }
 
     private void sortTableOfRecords(){
