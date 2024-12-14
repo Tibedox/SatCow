@@ -38,8 +38,8 @@ public class Main extends ApplicationAdapter {
     CowButton btnRestart;
     CowButton btnClearTable;
 
-    Cow[] cows = new Cow[1];
-    Pig[] pigs = new Pig[1];
+    Cow[] cows = new Cow[12];
+    Pig[] pigs = new Pig[13];
     Player[] players = new Player[6];
     long timeStartPlay;
     long timeCurrent;

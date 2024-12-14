@@ -26,13 +26,18 @@ public abstract class Animal {
         x+=stepX;
         y+=stepY;
         if(!isDead){
-            if (x < 0 || x > SCR_WIDTH - width) {
+            if(x < -width) x = SCR_WIDTH;
+            else if (x>SCR_WIDTH) x = -width;
+            if(y < -height) y = SCR_HEIGHT;
+            else if (y>SCR_HEIGHT) y = -height;
+
+            /*if (x < 0 || x > SCR_WIDTH - width) {
                 stepX = -stepX;
                 flipX = stepX > 0;
             }
             if (y < 0 || y > SCR_HEIGHT - height) {
                 stepY = -stepY;
-            }
+            }*/
         } else {
             width -= decreaseWidth;
             height -= decreaseHeight;
