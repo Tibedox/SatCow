@@ -36,9 +36,10 @@ public class Main extends ApplicationAdapter {
     private Sound sndCow;
 
     CowButton btnRestart;
+    CowButton btnClearTable;
 
-    Cow[] cows = new Cow[13];
-    Pig[] pigs = new Pig[12];
+    Cow[] cows = new Cow[1];
+    Pig[] pigs = new Pig[1];
     Player[] players = new Player[6];
     long timeStartPlay;
     long timeCurrent;
@@ -64,6 +65,7 @@ public class Main extends ApplicationAdapter {
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig.mp3"));
 
         btnRestart = new CowButton("RESTART", font60, 550, 120);
+        btnClearTable = new CowButton("clear table", font60, 10, 70);
 
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player("Noname", 0);
@@ -97,6 +99,9 @@ public class Main extends ApplicationAdapter {
             if(stateGame == GAME_OVER){
                 if(btnRestart.hit(touch.x, touch.y)){
                     gameRestart();
+                }
+                if(btnClearTable.hit(touch.x, touch.y)){
+                    clearTableOfRecords();
                 }
             }
 
@@ -137,7 +142,8 @@ public class Main extends ApplicationAdapter {
                 font60.draw(batch, players[i].name, 400, 500-i*70);
                 font60.draw(batch, showTime(players[i].time), 750, 500-i*70);
             }
-            btnRestart.font.draw(batch,btnRestart.text, btnRestart.x, btnRestart.y);
+            btnRestart.font.draw(batch, btnRestart.text, btnRestart.x, btnRestart.y);
+            btnClearTable.font.draw(batch, btnClearTable.text, btnClearTable.x, btnClearTable.y);
         }
         batch.end();
     }
@@ -219,6 +225,12 @@ public class Main extends ApplicationAdapter {
         for (int i = 0; i < players.length; i++) {
             players[i].name = prefs.getString("name"+i, "none");
             players[i].time = prefs.getLong("time"+i, 0);
+        }
+    }
+
+    private void clearTableOfRecords(){
+        for (int i = 0; i < players.length; i++) {
+            players[i].set("Noname", 0);
         }
     }
 }

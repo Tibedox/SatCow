@@ -33,7 +33,7 @@ public class InputKeyboard {
     private final float x, y; // координаты
     private final float keyboardWidth, keyboardHeight; // ширина и высота всей клавиатуры
     private final float keyWidth, keyHeight; // ширина и высота каждой кнопки
-    private final float padding = 0; // расстояние между кнопками
+    private final float padding = 10; // расстояние между кнопками
     private final int enterTextLength; // длина вводимого текста
 
     boolean isKeyboardShow;
