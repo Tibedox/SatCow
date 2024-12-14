@@ -18,11 +18,16 @@ public class Main extends ApplicationAdapter {
     public static final float SCR_HEIGHT = 720;
     public static final float SPAWN_X = 786;
     public static final float SPAWN_Y = 283;
+    public static final int PLAY_GAME = 0;
+    public static final int ENTER_NAME = 1;
+    public static final int GAME_OVER = 2;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Vector3 touch;
     private BitmapFont font, font60, font80;
+
+    InputKeyboard keyboard;
 
     private Texture imgCow;
     private Texture imgPig;
@@ -32,13 +37,13 @@ public class Main extends ApplicationAdapter {
 
     CowButton btnRestart;
 
-    Cow[] cows = new Cow[33];
-    Pig[] pigs = new Pig[22];
+    Cow[] cows = new Cow[13];
+    Pig[] pigs = new Pig[12];
     Player[] players = new Player[6];
     long timeStartPlay;
     long timeCurrent;
     int countAnimals;
-    boolean isGameOver;
+    int stateGame;
 
     @Override
     public void create() {
@@ -49,6 +54,8 @@ public class Main extends ApplicationAdapter {
         font = new BitmapFont(Gdx.files.internal("fonts/heffer.fnt"));
         font60 = new BitmapFont(Gdx.files.internal("fonts/heffer60.fnt"));
         font80 = new BitmapFont(Gdx.files.internal("fonts/heffer80.fnt"));
+
+        keyboard = new InputKeyboard(font60, SCR_WIDTH, SCR_HEIGHT, 12);
 
         imgCow = new Texture("cow0.png");
         imgPig = new Texture("pig.png");
@@ -87,20 +94,25 @@ public class Main extends ApplicationAdapter {
                 }
             }
 
-            if(isGameOver){
+            if(stateGame == GAME_OVER){
                 if(btnRestart.hit(touch.x, touch.y)){
                     gameRestart();
                 }
+            }
+
+            if(stateGame == ENTER_NAME) {
+                if (keyboard.touch(touch.x, touch.y)) gameOver(keyboard.getText());
             }
         }
 
         // события
         for (Cow cow : cows) cow.fly();
         for (Pig pig : pigs) pig.fly();
-        if(countAnimals == pigs.length+cows.length && !isGameOver){
-            gameOver();
-        }
-        if(!isGameOver) {
+        if(stateGame == PLAY_GAME) {
+            if (countAnimals == pigs.length + cows.length) {
+                stateGame = ENTER_NAME;
+                keyboard.start();
+            }
             timeCurrent = TimeUtils.millis() - timeStartPlay;
         }
 
@@ -116,7 +128,10 @@ public class Main extends ApplicationAdapter {
         }
         font.draw(batch, "Поймано: "+ countAnimals, 10, SCR_HEIGHT-10);
         font.draw(batch, showTime(timeCurrent), SCR_WIDTH-120, SCR_HEIGHT-10);
-        if(isGameOver){
+        if(stateGame == ENTER_NAME) {
+            keyboard.draw(batch);
+        }
+        if(stateGame == GAME_OVER){
             font80.draw(batch, "Game Over", 0, SCR_HEIGHT-100, SCR_WIDTH, Align.center, true);
             for (int i = 0; i < players.length-1; i++) {
                 font60.draw(batch, players[i].name, 400, 500-i*70);
@@ -138,6 +153,7 @@ public class Main extends ApplicationAdapter {
         font.dispose();
         font60.dispose();
         font80.dispose();
+        keyboard.dispose();
     }
 
     private String showTime(long t){
@@ -148,15 +164,15 @@ public class Main extends ApplicationAdapter {
         return min/10+min%10+":"+sec/10+sec%10+":"+msec/100;
     }
 
-    private void gameOver(){
-        isGameOver = true;
-        players[players.length-1].set("Winner2", timeCurrent);
+    private void gameOver(String name){
+        stateGame = GAME_OVER;
+        players[players.length-1].set(name, timeCurrent);
         sortTableOfRecords();
         saveTableOfRecords();
     }
 
     private void gameRestart(){
-        isGameOver = false;
+        stateGame = PLAY_GAME;
         countAnimals = 0;
         for (int i = 0; i < cows.length; i++) {
             float w = MathUtils.random(50, 200);
